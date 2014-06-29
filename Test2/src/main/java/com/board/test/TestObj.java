@@ -1,10 +1,21 @@
 package com.board.test;
 
+import org.springframework.stereotype.Component;
+
+@Component
 public class TestObj{
 	private String email;
 	private String password;
 	private String content;
 	private String registerTime;
+	
+	public TestObj(){};
+	public TestObj(String email, String password, String content, String registerTime){
+		this.email = email;
+		this.password = password;
+		this.content = content;
+		this.registerTime = registerTime;
+	}
 	
 	public String getEmail(){
 		return email;

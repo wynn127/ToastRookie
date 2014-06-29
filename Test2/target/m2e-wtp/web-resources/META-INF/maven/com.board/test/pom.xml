@@ -140,7 +140,13 @@
 			<artifactId>cubrid-jdbc</artifactId>
 			<version>9.3.0.0206</version>
 		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-core</artifactId>
+			<version>3.1.1.RELEASE</version>
+		</dependency>
 	</dependencies>
+    
     <build>
         <plugins>
             <plugin>

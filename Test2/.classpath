@@ -25,7 +25,5 @@
 			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="C:/Users/Wynn/Desktop/spring/commons-dbcp-1.4-bin/commons-dbcp-1.4/commons-dbcp-1.4.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Wynn/Desktop/spring/cubrid-jdbc-9.3.0.0206.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
