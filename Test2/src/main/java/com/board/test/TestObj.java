@@ -1,9 +1,12 @@
 package com.board.test;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+
 import org.springframework.stereotype.Component;
 
 @Component
-public class TestObj{
+public class TestObj extends TimeObj{
 	private String email;
 	private String password;
 	private String content;

@@ -48,7 +48,8 @@ public class TestObjDao {
 	}
 	
 	public List<TestObj> searchAll(){
-		String sql = "select * from visitor";
+		String sql = "select v.email,password,content,registerTime,modifiedTime "
+				+ "from visitor v, visittime t where v.email=t.email order by registertime";
 		RowMapper mapper = new RowMapper(){
 			public Object mapRow(ResultSet rs, int rowNum)throws SQLException{
 				TestObj obj = new TestObj();
@@ -56,9 +57,20 @@ public class TestObjDao {
 				obj.setPassword(rs.getString("password"));
 				obj.setContent(rs.getString("content"));
 				obj.setRegisterTime(rs.getString("registerTime"));
+				obj.setModifiedTime(rs.getString("modifiedTime"));
 				return obj;
 			}
 		};
 		return jdbcTemplate.query(sql, mapper);
+	}
+	
+	public int delete(String email){
+		String sql = "delete from visitor where email='"+email+"'";
+		return jdbcTemplate.update(sql);
+	}
+	
+	public int modify(String email, String content){
+		String sql = "update visitor set content='"+content+"' where email='"+email+"'";
+		return jdbcTemplate.update(sql);
 	}
 }

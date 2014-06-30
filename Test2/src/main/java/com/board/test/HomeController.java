@@ -1,16 +1,21 @@
 package com.board.test;
 
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
@@ -27,44 +32,162 @@ public class HomeController {
 	 */
 	@Autowired
 	TestObjDao objDao;
+	@Autowired
+	TimeObjDao timeDao;
+	
+	List<TestObj> list;
 	
 	@RequestMapping(value = "/", method = RequestMethod.GET)
 	public String home(Locale locale, Model model) {
 		logger.info("Welcome home! The client locale is {}.", locale);
 		
-		Date date = new Date();
-		DateFormat dateFormat = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG, locale);
-		
-		String formattedDate = dateFormat.format(date);
-		
-		model.addAttribute("serverTime", formattedDate );
-		
-		
-		
-		List<TestObj> list = objDao.searchAll();
+		list = objDao.searchAll();
 		logger.info("db connected");
+		
 		model.addAttribute("lists",list);
 		model.addAttribute("number", list.size());
-		
-		TestObj obj = objDao.getObj("asdf@qwer.com");
-		model.addAttribute("searchPw", obj.getPassword());
-		
-		//TestObj obj = new TestObj("test@test.com","1111","kkk","20140505");
-		//objDao.insert(obj);
 		
 		return "home";
 	}
 	
 	
-			
-	@RequestMapping(value = "/", method = RequestMethod.POST)
-	public String writeAction(Locale locale, @RequestBody TestObj obj){
+	@RequestMapping(value="change", method=RequestMethod.POST)
+	public String changeData(Model model, HttpServletRequest req, HttpServletResponse resp) throws IOException{
+		/*
 		Date date = new Date();
-		DateFormat dateFormat = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG, locale);
+		DateFormat dateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
+		String formattedDate = dateFormat.format(date);
+		*/
+		logger.info("db action");
+		resp.setContentType("text/html; charset=UTF-8");
+		String btn = req.getParameter("submitBtn");
+		
+		if(btn.equalsIgnoreCase("write")){
+			writeData(model,req,resp);
+		}
+		else if(btn.equalsIgnoreCase("modify")){
+			modifyData(model,req,resp);
+		}
+		else if(btn.equalsIgnoreCase("delete")){
+			deleteData(model,req,resp);
+		}
+		
+		list = objDao.searchAll();
+		model.addAttribute("lists",list);
+		model.addAttribute("number", list.size());
+		return "home";
+	}
+	
+	@RequestMapping(value = "/write", method = RequestMethod.POST)
+	public String writeData(Model model, HttpServletRequest req, HttpServletResponse resp) throws IOException{
+		Date date = new Date();
+		DateFormat dateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
 		String formattedDate = dateFormat.format(date);
 		
 		logger.info("db write action");
 		
+		PrintWriter out = resp.getWriter();
+		
+		String email = req.getParameter("email");
+		String password = req.getParameter("passwd");
+		String content = req.getParameter("content");
+		if(email!="" && password!=""){
+			TestObj check = objDao.getObj(email);
+			if(check != null){
+				out.println("<script>alert('이메일이 중복됩니다');</script>");
+				out.flush();
+				return "home";
+			}
+			TestObj add = new TestObj(email,password,content,formattedDate);
+			objDao.insert(add);
+			TimeObj addT = new TimeObj(email,"");
+			timeDao.insert(addT);
+		}
+		else{
+			out.println("<script>alert('이메일과 비밀번호를 입력하세요');</script>");
+		}
+		/*
+		list = objDao.searchAll();
+		model.addAttribute("lists",list);
+		model.addAttribute("number", list.size());
+		*/
+		out.flush();
+		return "home";
+	}
+	
+	@RequestMapping(value = "/modify", method = RequestMethod.POST)
+	public String modifyData(Model model, HttpServletRequest req, HttpServletResponse resp) throws IOException{
+		Date date = new Date();
+		DateFormat dateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
+		String formattedDate = dateFormat.format(date);
+		
+		String email = req.getParameter("email");
+		String passwd = req.getParameter("passwd");
+		
+		PrintWriter out = resp.getWriter();
+		
+		if(email!="" && passwd!=""){
+			//email 유효성검사
+			//to do
+			TestObj obj = objDao.getObj(email);
+			if(obj == null) out.println("<script> alert('사용자가 존재하지 않습니다.'); </script>");
+			else{
+				//password 유효성 검사
+				if(!obj.getPassword().equalsIgnoreCase(passwd))
+					out.println("<script>alert('비밀번호가 올바르지 않습니다.');</script>");
+				else{
+					objDao.modify(email, req.getParameter("content"));
+					timeDao.modify(email, formattedDate);
+				}
+			}
+		}
+		else{
+			out.println("<script>alert('이메일과 비밀번호를 입력하세요');</script>");
+		}
+		
+		logger.info("db modify action");
+		/*
+		list = objDao.searchAll();
+		model.addAttribute("lists",list);
+		model.addAttribute("number", list.size());
+		*/
+		out.flush();
+		return "home";
+	}
+	
+	@RequestMapping(value = "/delete", method = RequestMethod.POST)
+	public String deleteData(Model model, HttpServletRequest req, HttpServletResponse resp) throws IOException{
+		String email = req.getParameter("email");
+		String passwd = req.getParameter("passwd");
+		
+		PrintWriter out = resp.getWriter();
+		
+		if(email!="" && passwd!=""){
+			//email 유효성검사
+			//to do
+			TestObj obj = objDao.getObj(email);
+			if(obj == null) out.print("<script> alert('사용자가 존재하지 않습니다.'); </script>");
+			else{
+				//password 유효성 검사
+				if(!obj.getPassword().equalsIgnoreCase(passwd))
+					out.print("<script>alert('비밀번호가 올바르지 않습니다.');</script>");
+				else{
+					objDao.delete(email);
+					timeDao.delete(email);
+				}
+			}
+		}
+		else{
+			out.println("<script>alert('이메일과 비밀번호를 입력하세요');</script>");
+		}
+		
+		logger.info("db delete action");
+		/*
+		list = objDao.searchAll();
+		model.addAttribute("lists",list);
+		model.addAttribute("number", list.size());
+		*/
+		out.flush();
 		return "home";
 	}
 	
