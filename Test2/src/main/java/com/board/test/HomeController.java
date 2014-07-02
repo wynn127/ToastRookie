@@ -2,6 +2,7 @@ package com.board.test;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -60,6 +61,7 @@ public class HomeController {
 		*/
 		logger.info("db action");
 		resp.setContentType("text/html; charset=UTF-8");
+		req.setCharacterEncoding("UTF-8");
 		String btn = req.getParameter("submitBtn");
 		
 		if(btn.equalsIgnoreCase("write")){
@@ -71,10 +73,11 @@ public class HomeController {
 		else if(btn.equalsIgnoreCase("delete")){
 			deleteData(model,req,resp);
 		}
-		
+		/*
 		list = objDao.searchAll();
 		model.addAttribute("lists",list);
 		model.addAttribute("number", list.size());
+		*/
 		return "home";
 	}
 	
@@ -92,25 +95,26 @@ public class HomeController {
 		String password = req.getParameter("passwd");
 		String content = req.getParameter("content");
 		if(email!="" && password!=""){
-			TestObj check = objDao.getObj(email);
-			if(check != null){
+			if(objDao.getObj(email)!=null){
 				out.println("<script>alert('이메일이 중복됩니다');</script>");
 				out.flush();
 				return "home";
 			}
 			TestObj add = new TestObj(email,password,content,formattedDate);
 			objDao.insert(add);
+			logger.info("db objDao insert work");
 			TimeObj addT = new TimeObj(email,"");
 			timeDao.insert(addT);
+			logger.info("db timeDao insert work");
 		}
 		else{
 			out.println("<script>alert('이메일과 비밀번호를 입력하세요');</script>");
 		}
-		/*
+		
 		list = objDao.searchAll();
 		model.addAttribute("lists",list);
 		model.addAttribute("number", list.size());
-		*/
+		
 		out.flush();
 		return "home";
 	}
@@ -146,11 +150,11 @@ public class HomeController {
 		}
 		
 		logger.info("db modify action");
-		/*
+		
 		list = objDao.searchAll();
 		model.addAttribute("lists",list);
 		model.addAttribute("number", list.size());
-		*/
+		
 		out.flush();
 		return "home";
 	}
@@ -182,11 +186,11 @@ public class HomeController {
 		}
 		
 		logger.info("db delete action");
-		/*
+		
 		list = objDao.searchAll();
 		model.addAttribute("lists",list);
 		model.addAttribute("number", list.size());
-		*/
+		
 		out.flush();
 		return "home";
 	}

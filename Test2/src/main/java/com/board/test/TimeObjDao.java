@@ -24,8 +24,11 @@ public class TimeObjDao {
 	}
 	
 	public int insert(TimeObj obj){
-		String sql = "insert into visittime(email,[password],content,registerTime) values('"
-				+ obj.getEmail()+"','"+obj.getModifiedTime()+"')";
+		String sql = "insert into visittime(email,modifiedTime) values('"
+				+ obj.getEmail()+"',";
+		if(obj.getModifiedTime() == "") sql+="null";
+		else sql+="'"+obj.getModifiedTime()+"'";
+		sql += ')';
 		return jdbcTemplate.update(sql);
 	}
 	

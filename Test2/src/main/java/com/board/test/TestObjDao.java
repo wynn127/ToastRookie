@@ -7,6 +7,7 @@ import java.util.List;
 import javax.sql.DataSource;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
@@ -31,20 +32,28 @@ public class TestObjDao {
 	}
 	
 	public TestObj getObj(String email){
-		String sql = "select * from visitor where email='"+email+"'";
-		//String sql = "select * from visitor where email=?";
-		RowMapper<TestObj> mapper = new RowMapper<TestObj>(){
-			public TestObj mapRow(ResultSet rs, int rowNum)throws SQLException{
-				TestObj obj = new TestObj();
-				obj.setEmail(rs.getString("email"));
-				obj.setPassword(rs.getString("password"));
-				obj.setContent(rs.getString("content"));
-				obj.setRegisterTime(rs.getString("registertime"));
-				return obj;
-			}
-		};
-		//Object[] obj = {email};
-		return jdbcTemplate.queryForObject(sql,mapper);
+		try{
+			TestObj result = null;
+			String sql = "select * from visitor where email='"+email+"'";
+			//String sql = "select * from visitor where email=?";
+			RowMapper<TestObj> mapper = new RowMapper<TestObj>(){
+				public TestObj mapRow(ResultSet rs, int rowNum)throws SQLException{
+					TestObj obj = new TestObj();
+					obj.setEmail(rs.getString("email"));
+					obj.setPassword(rs.getString("password"));
+					obj.setContent(rs.getString("content"));
+					obj.setRegisterTime(rs.getString("registertime"));
+					return obj;
+				}
+			};
+			//Object[] obj = {email};
+			result = jdbcTemplate.queryForObject(sql,mapper);
+			return result;
+			
+		}catch(DataAccessException e){
+			
+		}
+		return null;
 	}
 	
 	public List<TestObj> searchAll(){
