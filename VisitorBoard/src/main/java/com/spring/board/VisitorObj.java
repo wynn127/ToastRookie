@@ -1,23 +1,19 @@
-package com.board.test;
-
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
+package com.spring.board;
 
 import org.springframework.stereotype.Component;
 
 @Component
-public class TestObj extends TimeObj{
+public class VisitorObj extends TimeObj{
 	private String email;
 	private String password;
 	private String content;
-	private String registerTime;
 	
-	public TestObj(){};
-	public TestObj(String email, String password, String content, String registerTime){
+	public VisitorObj(){};
+	
+	public VisitorObj(String email, String password, String content){
 		this.email = email;
 		this.password = password;
 		this.content = content;
-		this.registerTime = registerTime;
 	}
 	
 	public String getEmail(){
@@ -37,11 +33,5 @@ public class TestObj extends TimeObj{
 	}
 	public void setContent(String content){
 		this.content = content;
-	}
-	public String getRegisterTime(){
-		return registerTime;
-	}
-	public void setRegisterTime(String regTime){
-		this.registerTime = regTime;
 	}
 }

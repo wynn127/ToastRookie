@@ -1,4 +1,4 @@
-package com.board.test;
+package com.spring.board;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -15,7 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Repository
 @Transactional
-public class TestObjDao {
+public class VisitorObjDao {
 	private JdbcTemplate jdbcTemplate;
 	@Autowired
 	private DataSource dataSource;
@@ -24,25 +24,24 @@ public class TestObjDao {
 		this.jdbcTemplate = new JdbcTemplate(dataSource);
 	}
 	
-	public int insert(TestObj obj){
-		String sql = "insert into visitor(email,[password],content,registerTime) values('"
-				+ obj.getEmail()+"','"+obj.getPassword()+"','"+obj.getContent()+"','"+obj.getRegisterTime()+"')";
+	public int insert(VisitorObj obj){
+		String sql = "insert into visitor(email,password,content) values('"
+				+ obj.getEmail()+"','"+obj.getPassword()+"','"+obj.getContent()+"')";
 		//Object[] args = {obj.getEmail(), obj.getPassword(), obj.getContent(), obj.getRegisterTime()};
 		return jdbcTemplate.update(sql);
 	}
 	
-	public TestObj getObj(String email){
+	public VisitorObj getObj(String email){
 		try{
-			TestObj result = null;
+			VisitorObj result = null;
 			String sql = "select * from visitor where email='"+email+"'";
 			//String sql = "select * from visitor where email=?";
-			RowMapper<TestObj> mapper = new RowMapper<TestObj>(){
-				public TestObj mapRow(ResultSet rs, int rowNum)throws SQLException{
-					TestObj obj = new TestObj();
+			RowMapper<VisitorObj> mapper = new RowMapper<VisitorObj>(){
+				public VisitorObj mapRow(ResultSet rs, int rowNum)throws SQLException{
+					VisitorObj obj = new VisitorObj();
 					obj.setEmail(rs.getString("email"));
 					obj.setPassword(rs.getString("password"));
 					obj.setContent(rs.getString("content"));
-					obj.setRegisterTime(rs.getString("registertime"));
 					return obj;
 				}
 			};
@@ -56,16 +55,17 @@ public class TestObjDao {
 		return null;
 	}
 	
-	public List<TestObj> searchAll(){
-		String sql = "select v.email,password,content,registerTime,modifiedTime "
-				+ "from visitor v, visittime t where v.email=t.email order by registertime";
-		RowMapper mapper = new RowMapper(){
-			public Object mapRow(ResultSet rs, int rowNum)throws SQLException{
-				TestObj obj = new TestObj();
+	public List<VisitorObj> searchAll(){
+		String sql = "select v.email,password,content,registeredTime,modifiedTime "
+				+ "from visitor v, visittime t where v.email=t.email order by registeredtime";
+		RowMapper<VisitorObj> mapper = new RowMapper<VisitorObj>(){
+			public VisitorObj mapRow(ResultSet rs, int rowNum)throws SQLException{
+				VisitorObj obj = new VisitorObj();
 				obj.setEmail(rs.getString("email"));
 				obj.setPassword(rs.getString("password"));
 				obj.setContent(rs.getString("content"));
-				obj.setRegisterTime(rs.getString("registerTime"));
+				
+				obj.setRegisteredTime(rs.getString("registeredTime"));
 				obj.setModifiedTime(rs.getString("modifiedTime"));
 				return obj;
 			}

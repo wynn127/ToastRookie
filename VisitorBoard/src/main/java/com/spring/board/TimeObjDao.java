@@ -1,4 +1,4 @@
-package com.board.test;
+package com.spring.board;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -24,8 +24,8 @@ public class TimeObjDao {
 	}
 	
 	public int insert(TimeObj obj){
-		String sql = "insert into visittime(email,modifiedTime) values('"
-				+ obj.getEmail()+"',";
+		String sql = "insert into visittime(email,registeredTime,modifiedTime) values('"
+				+ obj.getEmail()+"','"+obj.getRegisteredTime()+"',";
 		if(obj.getModifiedTime() == "") sql+="null";
 		else sql+="'"+obj.getModifiedTime()+"'";
 		sql += ')';
@@ -38,6 +38,7 @@ public class TimeObjDao {
 			public TimeObj mapRow(ResultSet rs, int rowNum)throws SQLException{
 				TimeObj obj = new TimeObj();
 				obj.setEmail(rs.getString("email"));
+				obj.setRegisteredTime("registeredtime");
 				obj.setModifiedTime(rs.getString("modifiedtime"));
 				return obj;
 			}
@@ -51,6 +52,7 @@ public class TimeObjDao {
 			public TimeObj mapRow(ResultSet rs, int rowNum)throws SQLException{
 				TimeObj obj = new TimeObj();
 				obj.setEmail(rs.getString("email"));
+				obj.setRegisteredTime("registeredtime");
 				obj.setModifiedTime(rs.getString("modifiedtime"));
 				return obj;
 			}
