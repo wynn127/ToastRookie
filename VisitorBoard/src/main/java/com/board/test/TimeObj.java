@@ -1,5 +1,8 @@
 package com.board.test;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 public class TimeObj {
 	private String email;
 	private String modifiedTime;
@@ -14,7 +17,15 @@ public class TimeObj {
 		return email;
 	}
 	public void setEmail(String email){
-		this.email = email;
+		Pattern p = Pattern.compile("^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$");
+		Matcher m = p.matcher(email);
+		if(!m.matches()){
+			//
+			System.out.println("올바른 이메일이 아닙니다");
+		}
+		else{
+			this.email = email;
+		}
 	}
 	public String getModifiedTime(){
 		return modifiedTime;

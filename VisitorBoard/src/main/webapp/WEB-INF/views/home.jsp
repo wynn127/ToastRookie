@@ -33,9 +33,9 @@
 
 <div>
 <form name="inputForm" action="change" method="post">
-<table width = "80%" cellpadding="0" align="center">
+<table width = "80%" cellpadding="5" align="center" border="1" rules="none">
 	<tr>
-		<td> 입력/수정/삭제 </td>
+		<td colspan="3"> 글 입력/수정/삭제 </td>
 	</tr>
 	<tr>
 		<td> Email </td>
@@ -68,23 +68,23 @@
 <br><br>
 <table width="90%" cellpadding="1" border="2" align="center">
 	<tr>
+		<td align="center">번호</td>
 		<td align="center">email</td>
 		<td align="center">content</td>
 		<td align="center">registerTime</td>
 		<td align="center">modifiedTime</td>
 	</tr>
 	
-	<c:forEach var="listValue" items="${lists}">
+	<c:forEach var="listValue" items="${lists}" varStatus="status">
 		<tr>
-			<td width="18%">${listValue.email}</td>
+			<td width="5%" align="center">${status.count}</td>
+			<td width="15%">${listValue.email}</td>
 			<td width="50%">${listValue.content}</td>
 			<td width="10%" align="center">${listValue.registerTime}</td>
 			<td width="10%" align="center">${listValue.modifiedTime}</td>
 		</tr>
 	</c:forEach>
 </table>
-
-<P>  db column number=${number} </P>
 
 </body>
 </html>
